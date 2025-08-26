@@ -1,0 +1,321 @@
+<div class="washer-dashboard">
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <mat-card class="welcome-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>work</mat-icon>
+          Welcome, {{ currentUser?.name }}!
+        </mat-card-title>
+        <mat-card-subtitle>Washer Dashboard - Manage your bookings and jobs</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <mat-card class="stat-card earnings">
+        <mat-card-content>
+          <div class="stat-content">
+            <mat-icon>account_balance_wallet</mat-icon>
+            <div class="stat-info">
+              <h3>{{ formatCurrency(todayEarnings) }}</h3>
+              <p>Today's Earnings</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card total-jobs">
+        <mat-card-content>
+          <div class="stat-content">
+            <mat-icon>work_history</mat-icon>
+            <div class="stat-info">
+              <h3>{{ totalJobs }}</h3>
+              <p>Total Jobs</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card pending">
+        <mat-card-content>
+          <div class="stat-content">
+            <mat-icon [matBadge]="pendingJobs" matBadgeColor="warn">pending_actions</mat-icon>
+            <div class="stat-info">
+              <h3>{{ pendingJobs }}</h3>
+              <p>Pending Jobs</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card completed">
+        <mat-card-content>
+          <div class="stat-content">
+            <mat-icon>check_circle</mat-icon>
+            <div class="stat-info">
+              <h3>{{ completedJobs }}</h3>
+              <p>Completed Jobs</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Main Content Tabs -->
+  <div class="main-content">
+    <mat-tab-group class="booking-tabs" animationDuration="300ms">
+      
+      <!-- Available Bookings Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>assignment</mat-icon>
+          Available Bookings
+          <mat-chip-set *ngIf="availableBookings.length > 0">
+            <mat-chip color="primary">{{ availableBookings.length }}</mat-chip>
+          </mat-chip-set>
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="section-header">
+            <h2>🚗 Available Bookings</h2>
+            <p>Select bookings you want to take up</p>
+          </div>
+
+          <div *ngIf="availableBookings.length === 0" class="empty-state">
+            <mat-icon>assignment_turned_in</mat-icon>
+            <h3>No Available Bookings</h3>
+            <p>All bookings are currently assigned. Check back later!</p>
+          </div>
+
+          <div class="bookings-grid" *ngIf="availableBookings.length > 0">
+            <mat-card *ngFor="let booking of availableBookings" class="booking-card available">
+              <mat-card-header>
+                <mat-card-title>
+                  <div class="booking-title">
+                    <span>{{ booking.bookingId }}</span>
+                    <mat-chip [color]="getStatusColor(booking.status)">
+                      <mat-icon>{{ getStatusIcon(booking.status) }}</mat-icon>
+                      {{ booking.status }}
+                    </mat-chip>
+                  </div>
+                </mat-card-title>
+                <mat-card-subtitle>{{ booking.serviceName }}</mat-card-subtitle>
+              </mat-card-header>
+
+              <mat-card-content>
+                <div class="booking-details">
+                  <div class="detail-row">
+                    <mat-icon>person</mat-icon>
+                    <span><strong>Customer:</strong> {{ booking.customerName }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon>directions_car</mat-icon>
+                    <span><strong>Vehicle:</strong> {{ booking.carDetails }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon>schedule</mat-icon>
+                    <span><strong>Time:</strong> {{ booking.scheduledDate }} at {{ booking.scheduledTime }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon>location_on</mat-icon>
+                    <span><strong>Location:</strong> {{ booking.address }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon>phone</mat-icon>
+                    <span><strong>Contact:</strong> {{ booking.contactNumber }}</span>
+                  </div>
+                  <div class="detail-row price-row">
+                    <mat-icon>currency_rupee</mat-icon>
+                    <span class="price"><strong>Amount:</strong> {{ formatCurrency(booking.totalAmount) }}</span>
+                  </div>
+                  <div *ngIf="booking.specialInstructions" class="detail-row">
+                    <mat-icon>note</mat-icon>
+                    <span><strong>Instructions:</strong> {{ booking.specialInstructions }}</span>
+                  </div>
+                </div>
+              </mat-card-content>
+
+              <mat-card-actions>
+                <button mat-raised-button color="primary" 
+                        (click)="acceptBooking(booking)"
+                        [disabled]="isLoading">
+                  <mat-icon>assignment_turned_in</mat-icon>
+                  Accept Booking
+                </button>
+                <button mat-button>
+                  <mat-icon>info</mat-icon>
+                  View Details
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- My Jobs Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>work</mat-icon>
+          My Jobs
+          <mat-chip-set *ngIf="myBookings.length > 0">
+            <mat-chip color="accent">{{ myBookings.length }}</mat-chip>
+          </mat-chip-set>
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="section-header">
+            <h2>🔧 My Active Jobs</h2>
+            <p>Jobs assigned to you - mark as complete when done</p>
+          </div>
+
+          <div *ngIf="myBookings.length === 0" class="empty-state">
+            <mat-icon>work_off</mat-icon>
+            <h3>No Active Jobs</h3>
+            <p>You don't have any active jobs. Check available bookings to get started!</p>
+          </div>
+
+          <div class="bookings-grid" *ngIf="myBookings.length > 0">
+            <mat-card *ngFor="let booking of myBookings" class="booking-card my-job">
+              <mat-card-header>
+                <mat-card-title>
+                  <div class="booking-title">
+                    <span>{{ booking.bookingId }}</span>
+                    <mat-chip [color]="getStatusColor(booking.status)">
+                      <mat-icon>{{ getStatusIcon(booking.status) }}</mat-icon>
+                      {{ booking.status }}
+                    </mat-chip>
+                  </div>
+                </mat-card-title>
+                <mat-card-subtitle>{{ booking.serviceName }}</mat-card-subtitle>
+              </mat-card-header>
+
+              <mat-card-content>
+                <div class="booking-details">
+                  <div class="detail-row">
+                    <mat-icon>person</mat-icon>
+                    <span><strong>Customer:</strong> {{ booking.customerName }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon>directions_car</mat-icon>
+                    <span><strong>Vehicle:</strong> {{ booking.carDetails }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon>schedule</mat-icon>
+                    <span><strong>Time:</strong> {{ booking.scheduledDate }} at {{ booking.scheduledTime }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon>location_on</mat-icon>
+                    <span><strong>Location:</strong> {{ booking.address }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon>phone</mat-icon>
+                    <span><strong>Contact:</strong> {{ booking.contactNumber }}</span>
+                  </div>
+                  <div class="detail-row price-row">
+                    <mat-icon>currency_rupee</mat-icon>
+                    <span class="price"><strong>Earning:</strong> {{ formatCurrency(booking.totalAmount) }}</span>
+                  </div>
+                  <div *ngIf="booking.specialInstructions" class="detail-row">
+                    <mat-icon>note</mat-icon>
+                    <span><strong>Instructions:</strong> {{ booking.specialInstructions }}</span>
+                  </div>
+                </div>
+              </mat-card-content>
+
+              <mat-card-actions>
+                <button mat-raised-button color="primary" 
+                        (click)="completeJob(booking)"
+                        [disabled]="isLoading">
+                  <mat-icon>check_circle</mat-icon>
+                  Mark as Complete
+                </button>
+                <button mat-button color="accent">
+                  <mat-icon>call</mat-icon>
+                  Call Customer
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Completed Jobs Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>history</mat-icon>
+          Completed Jobs
+          <mat-chip-set *ngIf="completedBookings.length > 0">
+            <mat-chip color="primary">{{ completedBookings.length }}</mat-chip>
+          </mat-chip-set>
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="section-header">
+            <h2>✅ Completed Jobs</h2>
+            <p>Your job history and earnings</p>
+          </div>
+
+          <div *ngIf="completedBookings.length === 0" class="empty-state">
+            <mat-icon>history</mat-icon>
+            <h3>No Completed Jobs Yet</h3>
+            <p>Complete your first job to see it here!</p>
+          </div>
+
+          <div class="bookings-grid" *ngIf="completedBookings.length > 0">
+            <mat-card *ngFor="let booking of completedBookings" class="booking-card completed">
+              <mat-card-header>
+                <mat-card-title>
+                  <div class="booking-title">
+                    <span>{{ booking.bookingId }}</span>
+                    <mat-chip [color]="getStatusColor(booking.status)">
+                      <mat-icon>{{ getStatusIcon(booking.status) }}</mat-icon>
+                      {{ booking.status }}
+                    </mat-chip>
+                  </div>
+                </mat-card-title>
+                <mat-card-subtitle>{{ booking.serviceName }}</mat-card-subtitle>
+              </mat-card-header>
+
+              <mat-card-content>
+                <div class="booking-details">
+                  <div class="detail-row">
+                    <mat-icon>person</mat-icon>
+                    <span><strong>Customer:</strong> {{ booking.customerName }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon>directions_car</mat-icon>
+                    <span><strong>Vehicle:</strong> {{ booking.carDetails }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon>schedule</mat-icon>
+                    <span><strong>Completed:</strong> {{ booking.updatedAt | date:'short' }}</span>
+                  </div>
+                  <div class="detail-row price-row">
+                    <mat-icon>currency_rupee</mat-icon>
+                    <span class="price"><strong>Earned:</strong> {{ formatCurrency(booking.totalAmount) }}</span>
+                  </div>
+                </div>
+              </mat-card-content>
+
+              <mat-card-actions>
+                <button mat-button>
+                  <mat-icon>receipt</mat-icon>
+                  View Receipt
+                </button>
+                <button mat-button>
+                  <mat-icon>star</mat-icon>
+                  View Rating
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+    </mat-tab-group>
+  </div>
+</div>

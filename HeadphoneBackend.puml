@@ -1,0 +1,35 @@
+@startuml
+
+class Product {
+  Long id
+  String name
+  String description
+  double price
+  String imageUrl
+}
+
+class Category {
+  Long id
+  String name
+}
+
+class User {
+  Long id
+  String username
+  String password
+  String role
+}
+
+class Order {
+  Long id
+  LocalDateTime orderDate
+  double totalAmount
+}
+
+Product --> Category : belongs to
+Category "1" -- "*" Product : has
+User "1" -- "*" Order : places
+Order --> User : for
+Order "*" -- "*" Product : contains
+
+@enduml

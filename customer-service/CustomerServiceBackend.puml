@@ -1,0 +1,76 @@
+@startuml
+
+class CustomerController {
+  +registerCustomer(customerDTO: CustomerDTO): ResponseEntity<String>
+  +getCustomerById(id: Long): ResponseEntity<Customer>
+  +getAllCustomers(): ResponseEntity<List<Customer>>
+  +updateCustomer(id: Long, customerDTO: CustomerDTO): ResponseEntity<String>
+  +deleteCustomer(id: Long): ResponseEntity<String>
+  +searchCustomers(name: String): List<CustomerDTO>
+  +getWasherFromWasherService(id: Long): ResponseEntity<Object>
+  +getCustomersWithPagination(page: int, size: int, sortBy: String): ResponseEntity<List<Customer>>
+  +getCustomersByDateRange(startDate: String, endDate: String): ResponseEntity<List<Customer>>
+  +sendWelcomeEmail(id: Long): ResponseEntity<String>
+  +rateWasher(washerId: Long, rating: int, feedback: String): ResponseEntity<String>
+  +pay(payment: PaymentDTO): ResponseEntity<String>
+}
+
+interface CustomerService {
+  +registerCustomer(customerDTO: CustomerDTO): String
+  +getCustomerById(id: Long): Customer
+  +getAllCustomers(): List<Customer>
+  +updateCustomer(id: Long, customerDTO: CustomerDTO): String
+  +deleteCustomer(id: Long): String
+  +searchByName(name: String): List<CustomerDTO>
+  +fetchWasherDetails(id: Long): Object
+  +getCustomersWithPagination(page: int, size: int, sortBy: String): List<Customer>
+  +getCustomersByDateRange(startDate: String, endDate: String): List<Customer>
+  +sendWelcomeEmail(id: Long): void
+  +rateWasher(washerId: Long, rating: int, feedback: String): void
+  +pay(payment: PaymentDTO): ResponseEntity<String>
+}
+
+class CustomerServiceImpl implements CustomerService
+
+class Customer {
+  -id: Long
+  -name: String
+  -email: String
+  -cars: List<Car>
+}
+
+class CustomerDTO {
+  -id: Long
+  -name: String
+  -email: String
+}
+
+class PaymentDTO {
+  -paymentId: Long
+  -amount: Double
+  -status: String
+}
+
+interface CustomerRepository
+interface CarRepository
+interface WasherClient
+interface paymentInterface
+
+class Car {
+  -id: Long
+  -model: String
+  -customer: Customer
+}
+
+CustomerController --> CustomerService
+CustomerServiceImpl ..|> CustomerService
+CustomerServiceImpl --> CustomerRepository
+CustomerServiceImpl --> CarRepository
+CustomerServiceImpl --> WasherClient
+CustomerServiceImpl --> paymentInterface
+CustomerRepository --> Customer
+CarRepository --> Car
+Customer --> Car
+Car --> Customer
+
+@enduml

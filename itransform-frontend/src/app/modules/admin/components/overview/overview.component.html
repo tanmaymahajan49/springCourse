@@ -1,0 +1,136 @@
+<div class="overview-container">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>
+      <mat-icon>dashboard</mat-icon>
+      Admin Dashboard Overview
+    </h1>
+    <p>Welcome to i-Transform Car Wash Admin Panel</p>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="stats-grid">
+    <mat-card class="stat-card customers">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>people</mat-icon>
+          </div>
+          <div class="stat-details">
+            <h3>{{ stats.totalCustomers || 0 }}</h3>
+            <p>Total Customers</p>
+            <small>{{ stats.activeCustomers || 0 }} active</small>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card washers">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>work</mat-icon>
+          </div>
+          <div class="stat-details">
+            <h3>{{ stats.totalWashers || 0 }}</h3>
+            <p>Total Washers</p>
+            <small>{{ stats.activeWashers || 0 }} active</small>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card bookings">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>event_note</mat-icon>
+          </div>
+          <div class="stat-details">
+            <h3>{{ stats.totalBookings || 0 }}</h3>
+            <p>Total Bookings</p>
+            <small>{{ stats.pendingBookings || 0 }} pending</small>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card revenue">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>currency_rupee</mat-icon>
+          </div>
+          <div class="stat-details">
+            <h3>₹{{ stats.totalRevenue || 0 | number }}</h3>
+            <p>Total Revenue</p>
+            <small>{{ stats.completedBookings || 0 }} completed</small>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="actions-grid">
+    <mat-card class="action-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>people</mat-icon>
+          Manage Customers
+        </mat-card-title>
+        <mat-card-subtitle>View and manage all registered customers</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" routerLink="/admin/customers">
+          View Customers
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="action-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>work</mat-icon>
+          Manage Washers
+        </mat-card-title>
+        <mat-card-subtitle>View and manage all professional washers</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" routerLink="/admin/washers">
+          View Washers
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="action-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>event_note</mat-icon>
+          Manage Bookings
+        </mat-card-title>
+        <mat-card-subtitle>View and manage all service bookings</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" routerLink="/admin/bookings">
+          View Bookings
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="action-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>analytics</mat-icon>
+          View Analytics
+        </mat-card-title>
+        <mat-card-subtitle>Detailed reports and analytics</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" routerLink="/admin/analytics">
+          View Analytics
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

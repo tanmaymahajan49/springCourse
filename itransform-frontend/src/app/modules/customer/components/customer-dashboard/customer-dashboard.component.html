@@ -1,0 +1,89 @@
+<div class="customer-dashboard">
+  <!-- Sidebar Navigation -->
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #drawer class="sidenav" fixedInViewport="true" mode="side" opened="true">
+      <div class="sidenav-header">
+        <div class="user-info">
+          <mat-icon class="user-avatar">account_circle</mat-icon>
+          <div class="user-details">
+            <h3>Welcome Back!</h3>
+            <p>{{ currentUser?.name || 'Customer' }}</p>
+            <small>{{ currentUser?.email || '' }}</small>
+          </div>
+        </div>
+      </div>
+
+      <mat-nav-list class="nav-list">
+        <a mat-list-item routerLink="/customer/dashboard" routerLinkActive="active">
+          <mat-icon matListItemIcon>dashboard</mat-icon>
+          <span matListItemTitle>Dashboard</span>
+        </a>
+
+        <a mat-list-item routerLink="/customer/book-service" routerLinkActive="active">
+          <mat-icon matListItemIcon>local_car_wash</mat-icon>
+          <span matListItemTitle>Book Service</span>
+        </a>
+
+        <a mat-list-item routerLink="/customer/my-bookings" routerLinkActive="active">
+          <mat-icon matListItemIcon>event_note</mat-icon>
+          <span matListItemTitle>My Bookings</span>
+        </a>
+
+        <button mat-list-item class="disabled-item" disabled>
+          <mat-icon matListItemIcon>directions_car</mat-icon>
+          <span matListItemTitle>My Cars (Coming Soon)</span>
+        </button>
+
+        <button mat-list-item class="disabled-item" disabled>
+          <mat-icon matListItemIcon>person</mat-icon>
+          <span matListItemTitle>Profile (Coming Soon)</span>
+        </button>
+
+        <mat-divider></mat-divider>
+
+        <a mat-list-item (click)="logout()" class="logout-item">
+          <mat-icon matListItemIcon>logout</mat-icon>
+          <span matListItemTitle>Logout</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <!-- Main Content -->
+    <mat-sidenav-content class="main-content">
+      <!-- Top Toolbar -->
+      <mat-toolbar class="top-toolbar">
+        <button mat-icon-button (click)="drawer.toggle()" class="menu-button">
+          <mat-icon>menu</mat-icon>
+        </button>
+
+        <span class="page-title">{{getPageTitle()}}</span>
+
+        <span class="spacer"></span>
+
+        <button mat-icon-button [matMenuTriggerFor]="notificationMenu">
+          <mat-icon matBadge="3" matBadgeColor="warn">notifications</mat-icon>
+        </button>
+
+        <mat-menu #notificationMenu="matMenu">
+          <button mat-menu-item>
+            <mat-icon>event</mat-icon>
+            <span>Booking confirmed for tomorrow</span>
+          </button>
+          <button mat-menu-item>
+            <mat-icon>payment</mat-icon>
+            <span>Payment successful</span>
+          </button>
+          <button mat-menu-item>
+            <mat-icon>star</mat-icon>
+            <span>Please rate your last service</span>
+          </button>
+        </mat-menu>
+      </mat-toolbar>
+
+      <!-- Page Content -->
+      <div class="page-content">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

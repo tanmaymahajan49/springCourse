@@ -1,0 +1,81 @@
+
+
+
+
+
+
+
+<!-- i-Transform Car Wash Application -->
+<div class="app-container">
+  <!-- Navigation Header -->
+  <mat-toolbar color="primary" class="app-header">
+    <mat-toolbar-row class="clean-toolbar">
+      <span class="logo" routerLink="/home">
+        <mat-icon>local_car_wash</mat-icon>
+        {{ title }}
+      </span>
+
+      <!-- Theme Toggle (Optional) -->
+      <div class="theme-controls" style="display: none;">
+        <mat-slide-toggle
+          [(ngModel)]="isCleanTheme"
+          (change)="toggleTheme()"
+          color="primary">
+          <span class="theme-label">Clean UI</span>
+        </mat-slide-toggle>
+      </div>
+
+      <span class="spacer"></span>
+
+      <nav class="nav-links">
+        <a mat-button routerLink="/home" class="nav-link">
+          <mat-icon>home</mat-icon>
+          Home
+        </a>
+
+        <!-- Show role-specific links when logged in -->
+        <ng-container *ngIf="isLoggedIn$ | async">
+          <ng-container *ngIf="currentUser$ | async as user">
+            <a mat-button [routerLink]="'/'+user.role" *ngIf="user.role === 'customer'" class="nav-link">
+              <mat-icon>person</mat-icon>
+              My Dashboard
+            </a>
+            <a mat-button [routerLink]="'/'+user.role" *ngIf="user.role === 'admin'" class="nav-link">
+              <mat-icon>admin_panel_settings</mat-icon>
+              Admin Dashboard
+            </a>
+          </ng-container>
+          <button mat-button (click)="logout()" class="nav-link logout-btn">
+            <mat-icon>logout</mat-icon>
+            Logout
+          </button>
+        </ng-container>
+
+        <!-- Show login/register when not logged in -->
+        <ng-container *ngIf="!(isLoggedIn$ | async)">
+          <a mat-button routerLink="/login" class="nav-link">
+            <mat-icon>login</mat-icon>
+            Login
+          </a>
+          <a mat-raised-button color="primary" routerLink="/register" class="register-btn">
+            <mat-icon>person_add</mat-icon>
+            Register
+          </a>
+        </ng-container>
+      </nav>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <p>&copy; 2024 i-Transform Car Wash. All rights reserved.</p>
+      <p>Your trusted partner for premium car wash services</p>
+    </div>
+  </footer>
+</div>

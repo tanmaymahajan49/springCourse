@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Razorpay Integration Test</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #667eea;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .test-button:hover {
+            background: #5a6fd8;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 i-Transform Car Wash - Razorpay Integration Test</h1>
+        
+        <div id="status" class="status info">
+            Ready to test Razorpay integration with your Spring Boot backend services.
+        </div>
+
+        <h3>Backend Services Status:</h3>
+        <div id="backend-status">
+            <button class="test-button" onclick="testBackendServices()">Test Backend Connectivity</button>
+        </div>
+
+        <h3>Payment Tests:</h3>
+        <button class="test-button" onclick="testCreateOrder()">1. Test Create Order</button>
+        <button class="test-button" onclick="testRazorpayPayment()">2. Test Razorpay Payment</button>
+        <button class="test-button" onclick="testFullFlow()">3. Test Complete Flow</button>
+
+        <div id="logs" class="log"></div>
+    </div>
+
+    <script>
+        const PAYMENT_GATEWAY_URL = 'http://localhost:3001/payments';
+        const PAYMENT_SERVICE_URL = 'http://localhost:3001/payments';
+        const RAZORPAY_KEY = 'rzp_test_yJXdbFZ3gArwiB';
+
+        function log(message) {
+            const logs = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            logs.textContent += `[${timestamp}] ${message}\n`;
+            logs.scrollTop = logs.scrollHeight;
+            console.log(message);
+        }
+
+        function setStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        async function testBackendServices() {
+            log('🔍 Testing backend services connectivity...');
+            
+            try {
+                // Test Payment Service with simple test endpoint
+                const paymentServiceResponse = await fetch(`${PAYMENT_SERVICE_URL}/test`);
+                if (paymentServiceResponse.ok) {
+                    const data = await paymentServiceResponse.json();
+                    log('✅ Payment Service (8085) is UP: ' + data.message);
+                } else {
+                    log('❌ Payment Service (8085) returned: ' + paymentServiceResponse.status);
+                    // Try health endpoint as fallback
+                    try {
+                        const healthResponse = await fetch(`${PAYMENT_SERVICE_URL}/actuator/health`);
+                        if (healthResponse.ok) {
+                            log('✅ Payment Service (8085) health endpoint is UP');
+                        }
+                    } catch (healthError) {
+                        log('❌ Payment Service (8085) health endpoint also failed');
+                    }
+                }
+            } catch (error) {
+                log('❌ Payment Service (8085) connection failed: ' + error.message);
+            }
+
+            try {
+                // Test Payment Gateway
+                const gatewayResponse = await fetch(`${PAYMENT_GATEWAY_URL}/actuator/health`);
+                if (gatewayResponse.ok) {
+                    log('✅ Payment Gateway (8090) is UP');
+                } else {
+                    log('❌ Payment Gateway (8090) returned: ' + gatewayResponse.status);
+                }
+            } catch (error) {
+                log('❌ Payment Gateway (8090) connection failed: ' + error.message);
+                
+                // Try without actuator
+                try {
+                    const basicResponse = await fetch(`${PAYMENT_GATEWAY_URL}`);
+                    log('✅ Payment Gateway (8090) is UP (no actuator endpoint)');
+                } catch (basicError) {
+                    log('❌ Payment Gateway (8090) completely unavailable');
+                }
+            }
+        }
+
+        async function testCreateOrder() {
+            log('🔄 Testing order creation...');
+            
+            const orderRequest = {
+                amount: 599,
+                currency: 'INR',
+                receipt: 'receipt_' + Math.random().toString(36).substr(2, 9)
+            };
+
+            try {
+                const response = await fetch(`${PAYMENT_GATEWAY_URL}/create-order`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(orderRequest)
+                });
+
+                if (response.ok) {
+                    const orderData = await response.json();
+                    log('✅ Order created successfully: ' + JSON.stringify(orderData));
+                    setStatus('Order creation successful!', 'success');
+                    return orderData.id || orderData.orderId;
+                } else {
+                    const errorText = await response.text();
+                    log('❌ Order creation failed: ' + response.status + ' - ' + errorText);
+                    setStatus('Order creation failed!', 'error');
+                    return null;
+                }
+            } catch (error) {
+                log('❌ Order creation error: ' + error.message);
+                setStatus('Order creation error!', 'error');
+                return null;
+            }
+        }
+
+        function testRazorpayPayment() {
+            log('🚀 Testing Razorpay payment modal...');
+            
+            const options = {
+                key: RAZORPAY_KEY,
+                amount: 59900, // Amount in paise
+                currency: 'INR',
+                name: 'i-Transform Car Wash',
+                description: 'Premium Car Wash Service',
+                order_id: 'order_test_' + Math.random().toString(36).substr(2, 9),
+                prefill: {
+                    name: 'Test Customer',
+                    email: 'test@example.com',
+                    contact: '+91 9876543210'
+                },
+                theme: {
+                    color: '#667eea'
+                },
+                handler: function(response) {
+                    log('✅ Payment successful!');
+                    log('Payment ID: ' + response.razorpay_payment_id);
+                    log('Order ID: ' + response.razorpay_order_id);
+                    log('Signature: ' + response.razorpay_signature);
+                    setStatus('Payment completed successfully!', 'success');
+                },
+                modal: {
+                    ondismiss: function() {
+                        log('🚫 Payment cancelled by user');
+                        setStatus('Payment cancelled', 'error');
+                    }
+                }
+            };
+
+            try {
+                const rzp = new Razorpay(options);
+                rzp.on('payment.failed', function(response) {
+                    log('❌ Payment failed: ' + response.error.description);
+                    setStatus('Payment failed!', 'error');
+                });
+                
+                rzp.open();
+                log('📱 Razorpay payment modal opened');
+            } catch (error) {
+                log('❌ Razorpay initialization error: ' + error.message);
+                setStatus('Razorpay error!', 'error');
+            }
+        }
+
+        async function testFullFlow() {
+            log('🎯 Testing complete payment flow...');
+            
+            // Step 1: Create order
+            const orderId = await testCreateOrder();
+            
+            if (!orderId) {
+                log('❌ Cannot proceed without order ID');
+                return;
+            }
+
+            // Step 2: Open Razorpay with real order ID
+            setTimeout(() => {
+                log('🚀 Opening Razorpay with backend order ID: ' + orderId);
+                
+                const options = {
+                    key: RAZORPAY_KEY,
+                    amount: 59900,
+                    currency: 'INR',
+                    name: 'i-Transform Car Wash',
+                    description: 'Premium Car Wash Service',
+                    order_id: orderId,
+                    prefill: {
+                        name: 'Test Customer',
+                        email: 'test@example.com',
+                        contact: '+91 9876543210'
+                    },
+                    theme: {
+                        color: '#667eea'
+                    },
+                    handler: function(response) {
+                        log('✅ Full flow payment successful!');
+                        log('Payment ID: ' + response.razorpay_payment_id);
+                        log('Order ID: ' + response.razorpay_order_id);
+                        log('Signature: ' + response.razorpay_signature);
+                        setStatus('Complete flow successful!', 'success');
+                        
+                        // Step 3: Process payment in backend
+                        processPaymentInBackend(response);
+                    },
+                    modal: {
+                        ondismiss: function() {
+                            log('🚫 Full flow cancelled by user');
+                            setStatus('Full flow cancelled', 'error');
+                        }
+                    }
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.open();
+            }, 1000);
+        }
+
+        async function processPaymentInBackend(paymentResponse) {
+            log('💳 Processing payment in backend...');
+            
+            const paymentData = {
+                transactionId: Math.floor(Math.random() * 1000000),
+                washerId: 1,
+                customerId: 1,
+                amount: 599,
+                status: 'COMPLETED',
+                razorpayPaymentId: paymentResponse.razorpay_payment_id,
+                razorpayOrderId: paymentResponse.razorpay_order_id,
+                razorpaySignature: paymentResponse.razorpay_signature
+            };
+
+            try {
+                const response = await fetch(`${PAYMENT_SERVICE_URL}/payments`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(paymentData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    log('✅ Backend payment processing successful: ' + JSON.stringify(result));
+                    setStatus('Complete integration successful!', 'success');
+                } else {
+                    const errorText = await response.text();
+                    log('❌ Backend payment processing failed: ' + response.status + ' - ' + errorText);
+                    setStatus('Backend processing failed!', 'error');
+                }
+            } catch (error) {
+                log('❌ Backend payment processing error: ' + error.message);
+                setStatus('Backend processing error!', 'error');
+            }
+        }
+
+        // Initialize
+        log('🎉 Razorpay integration test page loaded');
+        log('Backend services: Payment Gateway (8090), Payment Service (8085)');
+        log('Razorpay Key: ' + RAZORPAY_KEY);
+    </script>
+</body>
+</html>

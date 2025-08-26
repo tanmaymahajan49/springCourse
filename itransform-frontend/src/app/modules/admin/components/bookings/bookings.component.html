@@ -1,0 +1,228 @@
+<div class="bookings-container">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>
+      <mat-icon>event_note</mat-icon>
+      Bookings Management
+    </h1>
+    <p>Manage and view all service bookings</p>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>event_note</mat-icon>
+          </div>
+          <div class="stat-details">
+            <h3>{{ bookings.length }}</h3>
+            <p>Total Bookings</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon pending">
+            <mat-icon>schedule</mat-icon>
+          </div>
+          <div class="stat-details">
+            <h3>{{ getBookingsByStatus('pending').length }}</h3>
+            <p>Pending</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon completed">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <div class="stat-details">
+            <h3>{{ getBookingsByStatus('completed').length }}</h3>
+            <p>Completed</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon revenue">
+            <mat-icon>currency_rupee</mat-icon>
+          </div>
+          <div class="stat-details">
+            <h3>₹{{ getTotalRevenue() | number }}</h3>
+            <p>Total Revenue</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Bookings Table -->
+  <mat-card class="table-card">
+    <mat-card-header>
+      <mat-card-title>All Bookings</mat-card-title>
+      <mat-card-subtitle>Complete list of service bookings</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="table-container">
+        <table mat-table [dataSource]="bookings" class="bookings-table">
+          
+          <!-- ID Column -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>Booking ID</th>
+            <td mat-cell *matCellDef="let booking">
+              <div class="booking-id">
+                <strong>{{ booking.id }}</strong>
+                <small>{{ booking.createdDate | date:'MMM dd, yyyy' }}</small>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Customer Column -->
+          <ng-container matColumnDef="customer">
+            <th mat-header-cell *matHeaderCellDef>Customer</th>
+            <td mat-cell *matCellDef="let booking">
+              <div class="customer-info">
+                <mat-icon class="customer-avatar">person</mat-icon>
+                <div class="customer-details">
+                  <strong>{{ booking.customerName }}</strong>
+                  <small>{{ booking.carDetails.make }} {{ booking.carDetails.model }}</small>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Washer Column -->
+          <ng-container matColumnDef="washer">
+            <th mat-header-cell *matHeaderCellDef>Washer</th>
+            <td mat-cell *matCellDef="let booking">
+              <div class="washer-info">
+                <mat-icon class="washer-avatar">work</mat-icon>
+                <span>{{ booking.washerName }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Service Column -->
+          <ng-container matColumnDef="service">
+            <th mat-header-cell *matHeaderCellDef>Service</th>
+            <td mat-cell *matCellDef="let booking">
+              <div class="service-info">
+                <strong>{{ booking.serviceType }}</strong>
+                <small>{{ booking.servicePackage }}</small>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Schedule Column -->
+          <ng-container matColumnDef="schedule">
+            <th mat-header-cell *matHeaderCellDef>Schedule</th>
+            <td mat-cell *matCellDef="let booking">
+              <div class="schedule-info">
+                <div>{{ booking.scheduledDate | date:'MMM dd, yyyy' }}</div>
+                <small>{{ booking.scheduledTime }}</small>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Amount Column -->
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef>Amount</th>
+            <td mat-cell *matCellDef="let booking">
+              <div class="amount">₹{{ booking.amount | number }}</div>
+            </td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let booking">
+              <mat-chip [color]="getStatusColor(booking.status)" selected>
+                {{ booking.status | titlecase }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Payment Column -->
+          <ng-container matColumnDef="payment">
+            <th mat-header-cell *matHeaderCellDef>Payment</th>
+            <td mat-cell *matCellDef="let booking">
+              <mat-chip [color]="getPaymentStatusColor(booking.paymentStatus)" selected>
+                {{ booking.paymentStatus | titlecase }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let booking">
+              <div class="action-buttons">
+                <button mat-icon-button (click)="viewBookingDetails(booking)" matTooltip="View Details">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button mat-icon-button (click)="updateBookingStatus(booking, 'confirmed')" 
+                        matTooltip="Confirm Booking" *ngIf="booking.status === 'pending'">
+                  <mat-icon>check</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="cancelBooking(booking)" 
+                        matTooltip="Cancel Booking" *ngIf="booking.status !== 'completed' && booking.status !== 'cancelled'">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+                <button mat-icon-button (click)="refundBooking(booking)" 
+                        matTooltip="Process Refund" *ngIf="booking.paymentStatus === 'paid' && booking.status === 'cancelled'">
+                  <mat-icon>money_off</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Booking Details Section -->
+  <div class="booking-details" *ngFor="let booking of bookings.slice(0, 2)">
+    <mat-card class="detail-card">
+      <mat-card-header>
+        <mat-card-title>{{ booking.id }} - {{ booking.customerName }}</mat-card-title>
+        <mat-card-subtitle>{{ booking.serviceType }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <strong>Car:</strong> {{ booking.carDetails.make }} {{ booking.carDetails.model }} ({{ booking.carDetails.licensePlate }})
+          </div>
+          <div class="detail-item">
+            <strong>Address:</strong> {{ booking.address }}
+          </div>
+          <div class="detail-item" *ngIf="booking.rating">
+            <strong>Rating:</strong>
+            <div class="rating-display">
+              <mat-icon *ngFor="let star of getRatingStars(booking.rating)" 
+                       [class.filled]="star === 'star'">{{ star }}</mat-icon>
+              <span>{{ booking.rating }}/5</span>
+            </div>
+          </div>
+          <div class="detail-item" *ngIf="booking.feedback">
+            <strong>Feedback:</strong> {{ booking.feedback }}
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

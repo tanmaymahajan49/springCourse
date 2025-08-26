@@ -1,0 +1,131 @@
+// Import shared admin styles
+@import '../customers/customers.component.scss';
+
+// Booking-specific styles
+.booking-id {
+  strong {
+    display: block;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  small {
+    color: #666;
+    font-size: 0.8rem;
+  }
+}
+
+.washer-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  .washer-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  
+  span {
+    font-weight: 500;
+    color: #333;
+  }
+}
+
+.service-info {
+  strong {
+    display: block;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  small {
+    color: #666;
+    font-size: 0.85rem;
+  }
+}
+
+.schedule-info {
+  div {
+    font-weight: 500;
+    color: #333;
+  }
+  
+  small {
+    color: #666;
+    font-size: 0.85rem;
+  }
+}
+
+.booking-details {
+  margin-top: 32px;
+  
+  .detail-card {
+    margin-bottom: 16px;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+  }
+  
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+    
+    .detail-item {
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      
+      strong {
+        color: #333;
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  
+  mat-icon {
+    font-size: 16px;
+    color: #ddd;
+    
+    &.filled {
+      color: #ffc107;
+    }
+  }
+  
+  span {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+  }
+}
+
+// Override stat card colors for bookings
+.stat-card {
+  .stat-icon {
+    &.pending {
+      background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    }
+    
+    &.completed {
+      background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    }
+    
+    &.revenue {
+      background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+    }
+  }
+}

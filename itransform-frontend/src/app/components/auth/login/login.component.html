@@ -1,0 +1,82 @@
+<div class="login-container">
+  <div class="login-card">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>login</mat-icon>
+          Sign In to i-Transform
+        </mat-card-title>
+        <mat-card-subtitle>Choose your account type to continue</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <!-- User Type Selection -->
+        <div class="user-type-selection">
+          <mat-button-toggle-group [(value)]="selectedUserType" class="user-type-toggle">
+            <mat-button-toggle value="customer">
+              <mat-icon>person</mat-icon>
+              Customer
+            </mat-button-toggle>
+            <mat-button-toggle value="washer">
+              <mat-icon>work</mat-icon>
+              Washer
+            </mat-button-toggle>
+            <mat-button-toggle value="admin">
+              <mat-icon>admin_panel_settings</mat-icon>
+              Admin
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+
+        <!-- Login Form -->
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="Enter your email">
+            <mat-icon matSuffix>email</mat-icon>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+              Email is required
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+              Please enter a valid email
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Enter your password">
+            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+              Password is required
+            </mat-error>
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || isLoading" class="login-button">
+              <mat-icon *ngIf="isLoading">hourglass_empty</mat-icon>
+              <mat-icon *ngIf="!isLoading">login</mat-icon>
+              {{isLoading ? 'Signing In...' : 'Sign In'}}
+            </button>
+          </div>
+
+          <!-- Quick Test Button for Washer Dashboard -->
+          <div class="test-actions" style="margin-top: 20px; text-align: center;">
+            <button mat-raised-button color="accent" type="button" (click)="quickTestWasher()" class="test-button">
+              <mat-icon>work</mat-icon>
+              🚀 Quick Test: Go to Washer Dashboard
+            </button>
+            <p style="font-size: 12px; color: #666; margin-top: 8px;">
+              Skip login and test the washer dashboard directly
+            </p>
+          </div>
+
+          <div class="form-links">
+            <a mat-button routerLink="/register">Don't have an account? Register</a>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

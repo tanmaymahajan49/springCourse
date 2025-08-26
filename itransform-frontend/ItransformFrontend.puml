@@ -1,0 +1,31 @@
+@startuml
+
+class AuthService
+class BookingService
+class PaymentService
+class NotificationService
+class EmailService
+class AdminService
+class AuthGuard
+
+class LoginComponent
+class RegisterComponent
+class CustomerDashboardComponent
+class BookServiceComponent
+class AdminDashboardComponent
+class WasherDashboardComponent
+class HomeComponent
+
+AuthGuard --> AuthService
+LoginComponent --> AuthService
+RegisterComponent --> AuthService
+CustomerDashboardComponent --> AuthService
+CustomerDashboardComponent --> BookingService
+BookServiceComponent --> AuthService
+BookServiceComponent --> BookingService
+BookServiceComponent --> NotificationService
+AdminDashboardComponent --> AdminService
+WasherDashboardComponent --> BookingService
+HomeComponent --> AuthService
+
+@enduml

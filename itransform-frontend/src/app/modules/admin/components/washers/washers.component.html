@@ -1,0 +1,201 @@
+<div class="washers-container">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>
+      <mat-icon>work</mat-icon>
+      Washers Management
+    </h1>
+    <p>Manage and view all professional washers</p>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>work</mat-icon>
+          </div>
+          <div class="stat-details">
+            <h3>{{ washers.length }}</h3>
+            <p>Total Washers</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon active">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <div class="stat-details">
+            <h3>{{ getActiveWashersCount() }}</h3>
+            <p>Active Washers</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon available">
+            <mat-icon>online_prediction</mat-icon>
+          </div>
+          <div class="stat-details">
+            <h3>{{ getAvailableWashersCount() }}</h3>
+            <p>Available Now</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon earnings">
+            <mat-icon>currency_rupee</mat-icon>
+          </div>
+          <div class="stat-details">
+            <h3>₹{{ getTotalEarnings() | number }}</h3>
+            <p>Total Earnings</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Washers Table -->
+  <mat-card class="table-card">
+    <mat-card-header>
+      <mat-card-title>All Washers</mat-card-title>
+      <mat-card-subtitle>Complete list of professional washers</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="table-container">
+        <table mat-table [dataSource]="washers" class="washers-table">
+          
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Washer</th>
+            <td mat-cell *matCellDef="let washer">
+              <div class="washer-info">
+                <mat-icon class="washer-avatar">person</mat-icon>
+                <div class="washer-details">
+                  <strong>{{ washer.name }}</strong>
+                  <small>Joined: {{ washer.joinedDate | date:'MMM dd, yyyy' }}</small>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Contact Column -->
+          <ng-container matColumnDef="contact">
+            <th mat-header-cell *matHeaderCellDef>Contact</th>
+            <td mat-cell *matCellDef="let washer">
+              <div class="contact-info">
+                <div>{{ washer.email }}</div>
+                <small>{{ washer.phone }}</small>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Service Areas Column -->
+          <ng-container matColumnDef="areas">
+            <th mat-header-cell *matHeaderCellDef>Service Areas</th>
+            <td mat-cell *matCellDef="let washer">
+              <mat-chip-set>
+                <mat-chip *ngFor="let area of washer.serviceAreas.slice(0, 2)">
+                  {{ area }}
+                </mat-chip>
+                <mat-chip *ngIf="washer.serviceAreas.length > 2" 
+                         [matTooltip]="washer.serviceAreas.slice(2).join(', ')">
+                  +{{ washer.serviceAreas.length - 2 }} more
+                </mat-chip>
+              </mat-chip-set>
+            </td>
+          </ng-container>
+
+          <!-- Rating Column -->
+          <ng-container matColumnDef="rating">
+            <th mat-header-cell *matHeaderCellDef>Rating</th>
+            <td mat-cell *matCellDef="let washer">
+              <div class="rating-display">
+                <div class="stars">
+                  <mat-icon *ngFor="let star of getRatingStars(washer.rating)" 
+                           [class.filled]="star === 'star'"
+                           [class.half]="star === 'star_half'">
+                    {{ star }}
+                  </mat-icon>
+                </div>
+                <span class="rating-value">{{ washer.rating }}/5</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Jobs Column -->
+          <ng-container matColumnDef="jobs">
+            <th mat-header-cell *matHeaderCellDef>Jobs</th>
+            <td mat-cell *matCellDef="let washer">
+              <div class="job-stats">
+                <mat-icon matBadge="{{ washer.totalJobs }}" matBadgeColor="primary">work</mat-icon>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Earnings Column -->
+          <ng-container matColumnDef="earnings">
+            <th mat-header-cell *matHeaderCellDef>Earnings</th>
+            <td mat-cell *matCellDef="let washer">
+              <div class="amount">₹{{ washer.totalEarnings | number }}</div>
+            </td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let washer">
+              <mat-chip [color]="getStatusColor(washer.status)" selected>
+                {{ washer.status | titlecase }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Availability Column -->
+          <ng-container matColumnDef="availability">
+            <th mat-header-cell *matHeaderCellDef>Availability</th>
+            <td mat-cell *matCellDef="let washer">
+              <mat-chip [color]="getAvailabilityColor(washer.availability)" selected>
+                {{ washer.availability | titlecase }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let washer">
+              <div class="action-buttons">
+                <button mat-icon-button (click)="viewWasherDetails(washer)" matTooltip="View Details">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button mat-icon-button (click)="editWasher(washer)" matTooltip="Edit Washer">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="suspendWasher(washer)" matTooltip="Suspend Washer">
+                  <mat-icon>block</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

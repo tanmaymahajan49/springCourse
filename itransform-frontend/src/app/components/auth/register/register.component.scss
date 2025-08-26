@@ -1,0 +1,213 @@
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+
+  .register-card {
+    width: 100%;
+    max-width: 600px;
+
+    mat-card {
+      padding: 0;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+      mat-card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 16px 16px 0 0;
+
+        mat-card-title {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          font-size: 1.5rem;
+          font-weight: 600;
+          margin: 0;
+
+          mat-icon {
+            font-size: 1.8rem;
+          }
+        }
+
+        mat-card-subtitle {
+          color: rgba(255, 255, 255, 0.95) !important;
+          margin-top: 8px;
+          font-size: 1rem;
+          font-weight: 400;
+        }
+      }
+
+      mat-card-content {
+        padding: 30px;
+      }
+    }
+  }
+}
+
+.user-type-selection {
+  margin-bottom: 30px;
+
+  .user-type-toggle {
+    width: 100%;
+    display: flex;
+
+    mat-button-toggle {
+      flex: 1;
+      border-radius: 8px !important;
+
+      &:first-child {
+        border-radius: 8px 0 0 8px !important;
+      }
+
+      &:last-child {
+        border-radius: 0 8px 8px 0 !important;
+      }
+
+      .mat-button-toggle-label-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 8px;
+
+        mat-icon {
+          font-size: 1.2rem;
+        }
+      }
+    }
+  }
+}
+
+.register-form {
+  .form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+
+    .half-width {
+      flex: 1;
+    }
+  }
+
+  .full-width {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  // Simple clean styling for form fields
+  mat-form-field {
+    width: 100%;
+
+    .mat-mdc-text-field-wrapper {
+      background-color: #ffffff !important;
+      border-radius: 8px !important;
+    }
+
+    .mat-mdc-input-element {
+      color: #333333 !important;
+      background-color: transparent !important;
+    }
+
+    .mat-mdc-form-field-label {
+      color: #666666 !important;
+    }
+
+    &.mat-focused .mat-mdc-form-field-label {
+      color: #2563eb !important;
+    }
+
+    &.mat-form-field-invalid .mat-mdc-form-field-label {
+      color: #dc2626 !important;
+    }
+  }
+
+  .washer-fields {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 20px;
+    margin-top: 20px;
+  }
+
+  .form-actions {
+    margin: 30px 0 20px 0;
+
+    .register-button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+  }
+
+  .form-links {
+    text-align: center;
+
+    a {
+      color: #667eea;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .register-container {
+    padding: 10px;
+
+    .register-card {
+      max-width: 100%;
+
+      mat-card {
+        mat-card-header {
+          padding: 20px;
+
+          mat-card-title {
+            font-size: 1.3rem;
+          }
+        }
+
+        mat-card-content {
+          padding: 20px;
+        }
+      }
+    }
+  }
+
+  .register-form {
+    .form-row {
+      flex-direction: column;
+      gap: 0;
+
+      .half-width {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+    }
+  }
+
+  .user-type-selection {
+    .user-type-toggle {
+      mat-button-toggle {
+        .mat-button-toggle-label-content {
+          padding: 8px 4px;
+          font-size: 0.9rem;
+
+          mat-icon {
+            font-size: 1rem;
+          }
+        }
+      }
+    }
+  }
+}

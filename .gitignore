@@ -1,0 +1,30 @@
+# IDE
+.metadata/
+.settings/
+.project
+.classpath
+.factorypath
+bin/
+.vscode/
+
+# Build outputs
+target/
+build/
+dist/
+out/
+.gradle/
+
+# Dependencies
+node_modules/
+.angular/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.tmp
+*.temp

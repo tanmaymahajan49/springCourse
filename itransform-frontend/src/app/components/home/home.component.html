@@ -1,0 +1,62 @@
+<div class="home-container">
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        <mat-icon class="hero-icon">local_car_wash</mat-icon>
+        Professional Car Wash Services
+      </h1>
+      <p class="hero-subtitle">
+        Get your car cleaned by professional washers in your area.
+        Quick, reliable, and affordable car wash services at your convenience.
+      </p>
+
+      <div class="hero-buttons">
+        <button mat-raised-button
+                color="primary"
+                (click)="onBookNow()"
+                class="cta-button"
+                [disabled]="isLoading">
+          <mat-icon>local_car_wash</mat-icon>
+          Book Car Wash Now
+        </button>
+        <button mat-stroked-button
+                color="primary"
+                (click)="onJoinAsWasher()"
+                class="secondary-button"
+                [disabled]="isLoading">
+          <mat-icon>work</mat-icon>
+          Join as Professional Washer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="features-section">
+    <div class="features-grid">
+      <mat-card class="feature-card">
+        <mat-card-content>
+          <mat-icon class="feature-icon">schedule</mat-icon>
+          <h3>Quick & Convenient</h3>
+          <p>Book a car wash service in minutes and get your car cleaned at your preferred time and location.</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="feature-card">
+        <mat-card-content>
+          <mat-icon class="feature-icon">verified</mat-icon>
+          <h3>Professional Washers</h3>
+          <p>All our washers are verified professionals with experience in providing quality car wash services.</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="feature-card">
+        <mat-card-content>
+          <mat-icon class="feature-icon">payment</mat-icon>
+          <h3>Secure Payments</h3>
+          <p>Safe and secure payment processing with multiple payment options for your convenience.</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

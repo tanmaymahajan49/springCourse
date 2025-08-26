@@ -1,0 +1,328 @@
+.washer-dashboard {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  .dashboard-header {
+    margin-bottom: 30px;
+
+    .welcome-card {
+      background: linear-gradient(135deg, #1976d2, #42a5f5);
+      color: white;
+
+      mat-card-header {
+        padding: 24px;
+      }
+
+      mat-card-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 28px;
+        font-weight: 600;
+
+        mat-icon {
+          font-size: 32px;
+          width: 32px;
+          height: 32px;
+        }
+      }
+
+      mat-card-subtitle {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 16px;
+        margin-top: 8px;
+      }
+    }
+  }
+
+  .stats-section {
+    margin-bottom: 30px;
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+
+      .stat-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        &:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        mat-card-content {
+          padding: 24px;
+        }
+
+        .stat-content {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+
+          mat-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+            opacity: 0.8;
+          }
+
+          .stat-info {
+            h3 {
+              margin: 0;
+              font-size: 32px;
+              font-weight: 700;
+              line-height: 1;
+            }
+
+            p {
+              margin: 4px 0 0 0;
+              color: rgba(0, 0, 0, 0.6);
+              font-size: 14px;
+              font-weight: 500;
+            }
+          }
+        }
+
+        &.earnings {
+          border-left: 4px solid #4caf50;
+          .stat-content mat-icon { color: #4caf50; }
+          .stat-info h3 { color: #4caf50; }
+        }
+
+        &.total-jobs {
+          border-left: 4px solid #2196f3;
+          .stat-content mat-icon { color: #2196f3; }
+          .stat-info h3 { color: #2196f3; }
+        }
+
+        &.pending {
+          border-left: 4px solid #ff9800;
+          .stat-content mat-icon { color: #ff9800; }
+          .stat-info h3 { color: #ff9800; }
+        }
+
+        &.completed {
+          border-left: 4px solid #9c27b0;
+          .stat-content mat-icon { color: #9c27b0; }
+          .stat-info h3 { color: #9c27b0; }
+        }
+      }
+    }
+  }
+
+  .main-content {
+    .booking-tabs {
+      .mat-mdc-tab-label {
+        min-width: 160px;
+        padding: 12px 24px;
+
+        .mat-mdc-tab-label-content {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        mat-chip-set {
+          margin-left: 8px;
+        }
+      }
+    }
+
+    .tab-content {
+      padding: 24px 0;
+
+      .section-header {
+        margin-bottom: 24px;
+        text-align: center;
+
+        h2 {
+          margin: 0 0 8px 0;
+          font-size: 24px;
+          font-weight: 600;
+          color: #333;
+        }
+
+        p {
+          margin: 0;
+          color: rgba(0, 0, 0, 0.6);
+          font-size: 16px;
+        }
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: rgba(0, 0, 0, 0.6);
+
+        mat-icon {
+          font-size: 64px;
+          width: 64px;
+          height: 64px;
+          margin-bottom: 16px;
+          opacity: 0.5;
+        }
+
+        h3 {
+          margin: 0 0 8px 0;
+          font-size: 20px;
+          font-weight: 500;
+        }
+
+        p {
+          margin: 0;
+          font-size: 14px;
+        }
+      }
+
+      .bookings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 24px;
+
+        .booking-card {
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          border-radius: 12px;
+          overflow: hidden;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+          }
+
+          &.available {
+            border-left: 4px solid #2196f3;
+          }
+
+          &.my-job {
+            border-left: 4px solid #ff9800;
+          }
+
+          &.completed {
+            border-left: 4px solid #4caf50;
+          }
+
+          mat-card-header {
+            padding: 20px 20px 16px 20px;
+            background: rgba(0, 0, 0, 0.02);
+
+            .booking-title {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              width: 100%;
+
+              span {
+                font-weight: 600;
+                font-size: 18px;
+              }
+            }
+
+            mat-card-subtitle {
+              margin-top: 4px;
+              font-weight: 500;
+              color: #1976d2;
+            }
+          }
+
+          mat-card-content {
+            padding: 20px;
+
+            .booking-details {
+              .detail-row {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 12px;
+                font-size: 14px;
+
+                &:last-child {
+                  margin-bottom: 0;
+                }
+
+                mat-icon {
+                  font-size: 18px;
+                  width: 18px;
+                  height: 18px;
+                  color: rgba(0, 0, 0, 0.6);
+                }
+
+                span {
+                  flex: 1;
+                  line-height: 1.4;
+                }
+
+                &.price-row {
+                  margin-top: 16px;
+                  padding-top: 16px;
+                  border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+                  .price {
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #4caf50;
+                  }
+                }
+              }
+            }
+          }
+
+          mat-card-actions {
+            padding: 16px 20px 20px 20px;
+            display: flex;
+            gap: 12px;
+
+            button {
+              flex: 1;
+
+              &[mat-raised-button] {
+                font-weight: 600;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .washer-dashboard {
+    padding: 16px;
+
+    .stats-section .stats-grid {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .main-content .tab-content .bookings-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .booking-card {
+      mat-card-actions {
+        flex-direction: column;
+
+        button {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+// Custom Snackbar Styles
+::ng-deep {
+  .success-snackbar {
+    background-color: #4caf50 !important;
+    color: white !important;
+  }
+
+  .error-snackbar {
+    background-color: #f44336 !important;
+    color: white !important;
+  }
+}

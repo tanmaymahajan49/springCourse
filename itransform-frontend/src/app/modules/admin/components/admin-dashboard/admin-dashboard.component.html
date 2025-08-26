@@ -1,0 +1,96 @@
+<div class="admin-dashboard">
+  <!-- Sidebar Navigation -->
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #drawer class="sidenav" fixedInViewport="true" mode="side" opened="true">
+      
+      <!-- Admin Profile Header -->
+      <div class="sidenav-header">
+        <div class="admin-info">
+          <mat-icon class="admin-avatar">admin_panel_settings</mat-icon>
+          <div class="admin-details">
+            <h3>{{ currentUser?.name || 'Admin' }}</h3>
+            <p>{{ currentUser?.email || 'admin@itransform.com' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <mat-nav-list class="nav-list">
+        <a mat-list-item routerLink="/admin/overview" routerLinkActive="active">
+          <mat-icon matListItemIcon>dashboard</mat-icon>
+          <span matListItemTitle>Overview</span>
+        </a>
+        
+        <a mat-list-item routerLink="/admin/customers" routerLinkActive="active">
+          <mat-icon matListItemIcon>people</mat-icon>
+          <span matListItemTitle>Customers</span>
+        </a>
+        
+        <a mat-list-item routerLink="/admin/washers" routerLinkActive="active">
+          <mat-icon matListItemIcon>work</mat-icon>
+          <span matListItemTitle>Washers</span>
+        </a>
+        
+        <a mat-list-item routerLink="/admin/bookings" routerLinkActive="active">
+          <mat-icon matListItemIcon>event_note</mat-icon>
+          <span matListItemTitle>Bookings</span>
+        </a>
+        
+        <a mat-list-item routerLink="/admin/analytics" routerLinkActive="active">
+          <mat-icon matListItemIcon>analytics</mat-icon>
+          <span matListItemTitle>Analytics</span>
+        </a>
+        
+        <a mat-list-item routerLink="/admin/settings" routerLinkActive="active">
+          <mat-icon matListItemIcon>settings</mat-icon>
+          <span matListItemTitle>Settings</span>
+        </a>
+
+        <!-- Logout Button -->
+        <button mat-list-item (click)="logout()" class="logout-item">
+          <mat-icon matListItemIcon>logout</mat-icon>
+          <span matListItemTitle>Logout</span>
+        </button>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <!-- Main Content Area -->
+    <mat-sidenav-content class="main-content">
+      <!-- Top Toolbar -->
+      <mat-toolbar class="top-toolbar">
+        <button mat-icon-button (click)="drawer.toggle()" class="menu-button">
+          <mat-icon>menu</mat-icon>
+        </button>
+        
+        <span class="page-title">Admin Dashboard</span>
+        
+        <span class="spacer"></span>
+        
+        <!-- Admin Menu -->
+        <button mat-icon-button [matMenuTriggerFor]="adminMenu">
+          <mat-icon>account_circle</mat-icon>
+        </button>
+        <mat-menu #adminMenu="matMenu">
+          <button mat-menu-item>
+            <mat-icon>person</mat-icon>
+            <span>Profile</span>
+          </button>
+          <button mat-menu-item>
+            <mat-icon>settings</mat-icon>
+            <span>Settings</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
+      </mat-toolbar>
+
+      <!-- Page Content -->
+      <div class="page-content">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

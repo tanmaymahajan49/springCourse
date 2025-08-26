@@ -1,0 +1,327 @@
+<div class="book-service-container">
+  <div class="header-section">
+    <h1>Book Car Wash Service</h1>
+    <p>Choose your service package, select your car, and schedule your appointment</p>
+  </div>
+
+  <mat-stepper [linear]="isLinear" #stepper class="booking-stepper">
+    <!-- Step 1: Select Service Package -->
+    <mat-step [stepControl]="serviceForm" label="Select Service">
+      <form [formGroup]="serviceForm">
+        <div class="step-content">
+          <h2>Choose Your Service Package</h2>
+          <div class="packages-grid">
+            <mat-card 
+              *ngFor="let package of servicePackages" 
+              class="package-card"
+              [class.selected]="selectedPackage?.id === package.id"
+              [class.popular]="package.popular"
+              (click)="selectPackage(package)">
+              
+              <div class="package-badge" *ngIf="package.popular">
+                <span>Most Popular</span>
+              </div>
+              
+              <mat-card-header>
+                <mat-card-title>{{package.name}}</mat-card-title>
+                <mat-card-subtitle>{{package.description}}</mat-card-subtitle>
+              </mat-card-header>
+              
+              <mat-card-content>
+                <div class="package-price">
+                  <span class="currency">₹</span>
+                  <span class="amount">{{package.price}}</span>
+                  <span class="duration">{{package.duration}}</span>
+                </div>
+                
+                <div class="package-features">
+                  <div class="feature" *ngFor="let feature of package.features">
+                    <mat-icon>check_circle</mat-icon>
+                    <span>{{feature}}</span>
+                  </div>
+                </div>
+              </mat-card-content>
+              
+              <mat-card-actions>
+                <button mat-raised-button 
+                        [color]="selectedPackage?.id === package.id ? 'primary' : ''"
+                        (click)="selectPackage(package)">
+                  {{selectedPackage?.id === package.id ? 'Selected' : 'Select Package'}}
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+          
+          <div class="step-actions">
+            <button mat-raised-button color="primary" matStepperNext [disabled]="!selectedPackage">
+              Next: Select Car
+            </button>
+          </div>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Step 2: Select Car -->
+    <mat-step [stepControl]="carForm" label="Select Car">
+      <form [formGroup]="carForm">
+        <div class="step-content">
+          <h2>Select Your Car</h2>
+          <div class="cars-grid">
+            <mat-card 
+              *ngFor="let car of cars" 
+              class="car-card"
+              [class.selected]="selectedCar?.id === car.id"
+              (click)="selectCar(car)">
+              
+              <mat-card-content>
+                <div class="car-icon">
+                  <mat-icon>directions_car</mat-icon>
+                </div>
+                <div class="car-details">
+                  <h3>{{car.make}} {{car.model}}</h3>
+                  <p>{{car.year}} • {{car.color}}</p>
+                  <p class="license-plate">{{car.licensePlate}}</p>
+                </div>
+                <div class="car-selection" *ngIf="selectedCar?.id === car.id">
+                  <mat-icon color="primary">check_circle</mat-icon>
+                </div>
+              </mat-card-content>
+            </mat-card>
+            
+            <mat-card class="add-car-card">
+              <mat-card-content>
+                <div class="add-car-content">
+                  <mat-icon>add_circle_outline</mat-icon>
+                  <h3>Add New Car</h3>
+                  <p>Register a new vehicle</p>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Special Instructions (Optional)</mat-label>
+            <textarea matInput formControlName="specialInstructions" 
+                      placeholder="Any specific requirements or instructions for the service"
+                      rows="3"></textarea>
+          </mat-form-field>
+          
+          <div class="step-actions">
+            <button mat-button matStepperPrevious>Back</button>
+            <button mat-raised-button color="primary" matStepperNext [disabled]="!selectedCar">
+              Next: Schedule
+            </button>
+          </div>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Step 3: Schedule Appointment -->
+    <mat-step [stepControl]="scheduleForm" label="Schedule">
+      <form [formGroup]="scheduleForm">
+        <div class="step-content">
+          <h2>Schedule Your Appointment</h2>
+          
+          <div class="schedule-grid">
+            <div class="date-time-section">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Select Date</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="date" [min]="minDate">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+              
+              <div class="time-slots" *ngIf="scheduleForm.get('date')?.value">
+                <h3>Available Time Slots</h3>
+                <div class="slots-grid">
+                  <button 
+                    *ngFor="let slot of timeSlots"
+                    mat-stroked-button
+                    [disabled]="!slot.available"
+                    [color]="scheduleForm.get('timeSlot')?.value === slot.time ? 'primary' : ''"
+                    class="time-slot"
+                    (click)="selectTimeSlot(slot)">
+                    {{slot.time}}
+                    <span *ngIf="!slot.available" class="unavailable">(Booked)</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="contact-section">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Service Address</mat-label>
+                <textarea matInput formControlName="address" 
+                          placeholder="Enter the address where service should be performed"
+                          rows="3"></textarea>
+                <mat-icon matSuffix>location_on</mat-icon>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Contact Number</mat-label>
+                <input matInput formControlName="contactNumber" 
+                       placeholder="Enter your contact number">
+                <mat-icon matSuffix>phone</mat-icon>
+              </mat-form-field>
+            </div>
+          </div>
+          
+          <div class="step-actions">
+            <button mat-button matStepperPrevious>Back</button>
+            <button mat-raised-button color="primary" matStepperNext
+                    [disabled]="scheduleForm.invalid"
+                    [title]="scheduleForm.invalid ? 'Please fill all required fields' : 'Proceed to review your booking'">
+              <mat-icon>preview</mat-icon>
+              Review & Confirm
+            </button>
+          </div>
+
+          <!-- Debug info for form validation -->
+          <div *ngIf="scheduleForm.invalid" class="validation-help">
+            <mat-icon color="warn">warning</mat-icon>
+            <span>Please complete all required fields to continue:</span>
+            <ul>
+              <li *ngIf="scheduleForm.get('date')?.invalid">Select a date</li>
+              <li *ngIf="scheduleForm.get('timeSlot')?.invalid">Choose a time slot</li>
+              <li *ngIf="scheduleForm.get('address')?.invalid">Enter your address</li>
+              <li *ngIf="scheduleForm.get('contactNumber')?.invalid">Enter a valid phone number</li>
+            </ul>
+            <button mat-button color="primary" (click)="checkFormStatus()" style="margin-top: 8px;">
+              <mat-icon>bug_report</mat-icon>
+              Debug Form Status
+            </button>
+          </div>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Step 4: Review and Confirm -->
+    <mat-step label="Confirm Booking">
+      <div class="step-content">
+        <div class="confirmation-header">
+          <mat-icon class="confirmation-icon">assignment_turned_in</mat-icon>
+          <h2>Review & Confirm Your Booking</h2>
+          <p class="confirmation-subtitle">Please review all details before confirming your car wash service</p>
+        </div>
+        
+        <div class="booking-summary">
+          <mat-card class="summary-card">
+            <mat-card-header>
+              <mat-card-title>Booking Summary</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="summary-section">
+                <h3>Service Package</h3>
+                <div class="summary-item">
+                  <span class="label">{{selectedPackage?.name}}</span>
+                  <span class="value">₹{{selectedPackage?.price}}</span>
+                </div>
+                <p class="description">{{selectedPackage?.description}}</p>
+              </div>
+              
+              <mat-divider></mat-divider>
+              
+              <div class="summary-section">
+                <h3>Vehicle Details</h3>
+                <div class="summary-item">
+                  <span class="label">{{selectedCar?.make}} {{selectedCar?.model}}</span>
+                  <span class="value">{{selectedCar?.year}}</span>
+                </div>
+                <p class="description">{{selectedCar?.color}} • {{selectedCar?.licensePlate}}</p>
+              </div>
+              
+              <mat-divider></mat-divider>
+              
+              <div class="summary-section">
+                <h3>Appointment Details</h3>
+                <div class="summary-item">
+                  <span class="label">Date & Time</span>
+                  <span class="value">{{scheduleForm.get('date')?.value | date}} at {{scheduleForm.get('timeSlot')?.value}}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="label">Duration</span>
+                  <span class="value">{{selectedPackage?.duration}}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="label">Location</span>
+                  <span class="value">{{scheduleForm.get('address')?.value}}</span>
+                </div>
+              </div>
+              
+              <mat-divider></mat-divider>
+
+              <div class="summary-section payment-section">
+                <h3>Payment Information</h3>
+                <div class="payment-info">
+                  <div class="payment-method">
+                    <mat-icon>payment</mat-icon>
+                    <span>Powered by Razorpay Payment Gateway</span>
+                  </div>
+                  <div class="payment-features">
+                    <div class="feature">
+                      <mat-icon>security</mat-icon>
+                      <span>Bank-level Security</span>
+                    </div>
+                    <div class="feature">
+                      <mat-icon>credit_card</mat-icon>
+                      <span>Cards, UPI, Net Banking, Wallets</span>
+                    </div>
+                    <div class="feature">
+                      <mat-icon>verified_user</mat-icon>
+                      <span>Trusted by 8M+ businesses</span>
+                    </div>
+                    <div class="feature">
+                      <mat-icon>flash_on</mat-icon>
+                      <span>Instant payment confirmation</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <mat-divider></mat-divider>
+
+              <div class="summary-section total-section">
+                <div class="summary-item total">
+                  <span class="label">Total Amount</span>
+                  <span class="value">₹{{getTotalPrice()}}</span>
+                </div>
+                <div class="payment-note">
+                  <mat-icon>info</mat-icon>
+                  <span>You will be redirected to Razorpay's secure payment gateway</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        
+        <!-- Primary Confirmation Actions -->
+        <div class="confirmation-actions">
+          <div class="action-buttons">
+            <button mat-stroked-button matStepperPrevious [disabled]="isSubmitting" class="back-button">
+              <mat-icon>arrow_back</mat-icon>
+              Back to Edit
+            </button>
+            <button mat-raised-button color="primary" (click)="onSubmit()" class="confirm-booking-button" [disabled]="isSubmitting">
+              <mat-spinner *ngIf="isSubmitting" diameter="20" class="button-spinner"></mat-spinner>
+              <mat-icon *ngIf="!isSubmitting">payment</mat-icon>
+              {{ isSubmitting ? 'Processing Payment...' : 'Proceed to Payment' }}
+            </button>
+          </div>
+          <div class="confirmation-note">
+            <mat-icon>info</mat-icon>
+            <span>By proceeding, you agree to our terms and conditions. You will be redirected to Razorpay for secure payment.</span>
+          </div>
+        </div>
+
+        <!-- Fallback Simple Button (in case the styled one doesn't show) -->
+        <div style="text-align: center; margin: 24px 0;">
+          <button mat-raised-button color="primary" (click)="onSubmit()" class="simple-confirm-button" [disabled]="isSubmitting">
+            <mat-icon *ngIf="!isSubmitting">payment</mat-icon>
+            <mat-spinner *ngIf="isSubmitting" diameter="20"></mat-spinner>
+            {{ isSubmitting ? 'Processing Payment...' : 'PAY NOW & BOOK' }}
+          </button>
+        </div>
+      </div>
+    </mat-step>
+  </mat-stepper>
+</div>

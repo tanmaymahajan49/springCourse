@@ -1,0 +1,161 @@
+<div class="dashboard-container">
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <div class="welcome-content">
+      <h1>Welcome back, John!</h1>
+      <p>Ready to keep your car sparkling clean? Book your next service or check your recent bookings.</p>
+      <button mat-raised-button color="primary" routerLink="/customer/book-service" class="cta-button">
+        <mat-icon>local_car_wash</mat-icon>
+        Book New Service
+      </button>
+    </div>
+    <div class="welcome-image">
+      <mat-icon class="welcome-icon">local_car_wash</mat-icon>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon">
+              <mat-icon color="primary">event_note</mat-icon>
+            </div>
+            <div class="stat-details">
+              <h3>12</h3>
+              <p>Total Bookings</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon">
+              <mat-icon color="accent">directions_car</mat-icon>
+            </div>
+            <div class="stat-details">
+              <h3>3</h3>
+              <p>Registered Cars</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon">
+              <mat-icon color="warn">schedule</mat-icon>
+            </div>
+            <div class="stat-details">
+              <h3>1</h3>
+              <p>Pending Bookings</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon">
+              <mat-icon style="color: #4caf50;">payment</mat-icon>
+            </div>
+            <div class="stat-details">
+              <h3>₹6,500</h3>
+              <p>Total Spent</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="content-section">
+    <div class="content-grid">
+      <!-- Recent Bookings -->
+      <mat-card class="content-card">
+        <mat-card-header>
+          <mat-card-title>Recent Bookings</mat-card-title>
+          <mat-card-subtitle>Your latest car wash services</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="booking-list">
+            <div class="booking-item" *ngFor="let booking of recentBookings">
+              <div class="booking-info">
+                <h4>{{booking.service}}</h4>
+                <p>{{booking.car}} • {{booking.date}}</p>
+              </div>
+              <div class="booking-status">
+                <mat-chip [color]="getStatusColor(booking.status)">{{booking.status}}</mat-chip>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button routerLink="/customer/my-bookings">View All Bookings</button>
+        </mat-card-actions>
+      </mat-card>
+
+      <!-- Quick Actions -->
+      <mat-card class="content-card">
+        <mat-card-header>
+          <mat-card-title>Quick Actions</mat-card-title>
+          <mat-card-subtitle>Common tasks</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="quick-actions">
+            <button mat-stroked-button class="action-button" routerLink="/customer/book-service">
+              <mat-icon>local_car_wash</mat-icon>
+              Book Service
+            </button>
+            <button mat-stroked-button class="action-button" disabled>
+              <mat-icon>add</mat-icon>
+              Add New Car (Coming Soon)
+            </button>
+            <button mat-stroked-button class="action-button" disabled>
+              <mat-icon>person</mat-icon>
+              Update Profile (Coming Soon)
+            </button>
+            <button mat-stroked-button class="action-button" disabled>
+              <mat-icon>support_agent</mat-icon>
+              Contact Support (Coming Soon)
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Upcoming Bookings -->
+  <div class="upcoming-section" *ngIf="upcomingBookings.length > 0">
+    <mat-card class="upcoming-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>schedule</mat-icon>
+          Upcoming Bookings
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="upcoming-list">
+          <div class="upcoming-item" *ngFor="let booking of upcomingBookings">
+            <div class="upcoming-info">
+              <h4>{{booking.service}}</h4>
+              <p>{{booking.car}} • {{booking.date}} at {{booking.time}}</p>
+              <p class="location">📍 {{booking.location}}</p>
+            </div>
+            <div class="upcoming-actions">
+              <button mat-button color="primary">Reschedule</button>
+              <button mat-button color="warn">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

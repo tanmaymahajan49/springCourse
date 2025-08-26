@@ -1,0 +1,248 @@
+<div class="my-bookings-container">
+  <div class="header-section">
+    <h1>My Bookings</h1>
+    <p>Track and manage all your car wash appointments</p>
+  </div>
+
+  <mat-tab-group class="bookings-tabs" animationDuration="300ms">
+    <!-- Upcoming Bookings -->
+    <mat-tab label="Upcoming">
+      <ng-template matTabContent>
+        <div class="tab-content">
+          <div class="bookings-header">
+            <h2>Upcoming Appointments</h2>
+            <span class="count-badge">{{upcomingBookings.length}} booking(s)</span>
+          </div>
+
+          <div class="bookings-list" *ngIf="upcomingBookings.length > 0; else noUpcoming">
+            <mat-card *ngFor="let booking of upcomingBookings" class="booking-card upcoming">
+              <mat-card-content>
+                <div class="booking-header">
+                  <div class="booking-info">
+                    <h3>{{booking.service}}</h3>
+                    <p class="booking-id">Booking ID: {{booking.id}}</p>
+                  </div>
+                  <div class="booking-status">
+                    <mat-chip [color]="getStatusColor(booking.status)">
+                      <mat-icon>{{getStatusIcon(booking.status)}}</mat-icon>
+                      {{booking.status}}
+                    </mat-chip>
+                  </div>
+                </div>
+
+                <div class="booking-details">
+                  <div class="detail-row">
+                    <mat-icon>directions_car</mat-icon>
+                    <span>{{booking.car}}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon>schedule</mat-icon>
+                    <span>{{booking.date | date:'fullDate'}} at {{booking.time}}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon>location_on</mat-icon>
+                    <span>{{booking.location}}</span>
+                  </div>
+                  <div class="detail-row" *ngIf="booking.washer">
+                    <mat-icon>person</mat-icon>
+                    <span>Washer: {{booking.washer}}</span>
+                  </div>
+                  <div class="detail-row price">
+                    <mat-icon>payment</mat-icon>
+                    <span>₹{{booking.price}}</span>
+                  </div>
+                </div>
+
+                <mat-card-actions class="booking-actions">
+                  <button mat-button color="primary" (click)="rescheduleBooking(booking)">
+                    <mat-icon>schedule</mat-icon>
+                    Reschedule
+                  </button>
+                  <button mat-button color="warn" (click)="cancelBooking(booking)">
+                    <mat-icon>cancel</mat-icon>
+                    Cancel
+                  </button>
+                  <button mat-icon-button [matMenuTriggerFor]="upcomingMenu">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #upcomingMenu="matMenu">
+                    <button mat-menu-item>
+                      <mat-icon>phone</mat-icon>
+                      <span>Contact Washer</span>
+                    </button>
+                    <button mat-menu-item>
+                      <mat-icon>directions</mat-icon>
+                      <span>Get Directions</span>
+                    </button>
+                  </mat-menu>
+                </mat-card-actions>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <ng-template #noUpcoming>
+            <div class="empty-state">
+              <mat-icon>event_available</mat-icon>
+              <h3>No Upcoming Bookings</h3>
+              <p>You don't have any upcoming appointments. Book a service to get started!</p>
+              <button mat-raised-button color="primary" routerLink="/customer/book-service">
+                Book New Service
+              </button>
+            </div>
+          </ng-template>
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <!-- Completed Bookings -->
+    <mat-tab label="Completed">
+      <ng-template matTabContent>
+        <div class="tab-content">
+          <div class="bookings-header">
+            <h2>Completed Services</h2>
+            <span class="count-badge">{{completedBookings.length}} booking(s)</span>
+          </div>
+
+          <div class="bookings-list" *ngIf="completedBookings.length > 0; else noCompleted">
+            <mat-card *ngFor="let booking of completedBookings" class="booking-card completed">
+              <mat-card-content>
+                <div class="booking-header">
+                  <div class="booking-info">
+                    <h3>{{booking.service}}</h3>
+                    <p class="booking-id">Booking ID: {{booking.id}}</p>
+                  </div>
+                  <div class="booking-status">
+                    <mat-chip [color]="getStatusColor(booking.status)">
+                      <mat-icon>{{getStatusIcon(booking.status)}}</mat-icon>
+                      {{booking.status}}
+                    </mat-chip>
+                  </div>
+                </div>
+
+                <div class="booking-details">
+                  <div class="detail-row">
+                    <mat-icon>directions_car</mat-icon>
+                    <span>{{booking.car}}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon>schedule</mat-icon>
+                    <span>{{booking.date | date:'fullDate'}} at {{booking.time}}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon>location_on</mat-icon>
+                    <span>{{booking.location}}</span>
+                  </div>
+                  <div class="detail-row" *ngIf="booking.washer">
+                    <mat-icon>person</mat-icon>
+                    <span>Washer: {{booking.washer}}</span>
+                  </div>
+                  <div class="detail-row price">
+                    <mat-icon>payment</mat-icon>
+                    <span>₹{{booking.price}}</span>
+                  </div>
+                </div>
+
+                <mat-card-actions class="booking-actions">
+                  <button mat-button color="primary" (click)="rateService(booking)">
+                    <mat-icon>star</mat-icon>
+                    Rate Service
+                  </button>
+                  <button mat-button (click)="rebookService(booking)">
+                    <mat-icon>refresh</mat-icon>
+                    Book Again
+                  </button>
+                  <button mat-icon-button [matMenuTriggerFor]="completedMenu">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #completedMenu="matMenu">
+                    <button mat-menu-item>
+                      <mat-icon>receipt</mat-icon>
+                      <span>Download Invoice</span>
+                    </button>
+                    <button mat-menu-item>
+                      <mat-icon>support_agent</mat-icon>
+                      <span>Report Issue</span>
+                    </button>
+                  </mat-menu>
+                </mat-card-actions>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <ng-template #noCompleted>
+            <div class="empty-state">
+              <mat-icon>history</mat-icon>
+              <h3>No Completed Bookings</h3>
+              <p>Your completed services will appear here once you've used our service.</p>
+            </div>
+          </ng-template>
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <!-- Cancelled Bookings -->
+    <mat-tab label="Cancelled">
+      <ng-template matTabContent>
+        <div class="tab-content">
+          <div class="bookings-header">
+            <h2>Cancelled Bookings</h2>
+            <span class="count-badge">{{cancelledBookings.length}} booking(s)</span>
+          </div>
+
+          <div class="bookings-list" *ngIf="cancelledBookings.length > 0; else noCancelled">
+            <mat-card *ngFor="let booking of cancelledBookings" class="booking-card cancelled">
+              <mat-card-content>
+                <div class="booking-header">
+                  <div class="booking-info">
+                    <h3>{{booking.service}}</h3>
+                    <p class="booking-id">Booking ID: {{booking.id}}</p>
+                  </div>
+                  <div class="booking-status">
+                    <mat-chip [color]="getStatusColor(booking.status)">
+                      <mat-icon>{{getStatusIcon(booking.status)}}</mat-icon>
+                      {{booking.status}}
+                    </mat-chip>
+                  </div>
+                </div>
+
+                <div class="booking-details">
+                  <div class="detail-row">
+                    <mat-icon>directions_car</mat-icon>
+                    <span>{{booking.car}}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon>schedule</mat-icon>
+                    <span>{{booking.date | date:'fullDate'}} at {{booking.time}}</span>
+                  </div>
+                  <div class="detail-row">
+                    <mat-icon>location_on</mat-icon>
+                    <span>{{booking.location}}</span>
+                  </div>
+                  <div class="detail-row price">
+                    <mat-icon>payment</mat-icon>
+                    <span>₹{{booking.price}}</span>
+                  </div>
+                </div>
+
+                <mat-card-actions class="booking-actions">
+                  <button mat-button color="primary" (click)="rebookService(booking)">
+                    <mat-icon>refresh</mat-icon>
+                    Book Again
+                  </button>
+                </mat-card-actions>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <ng-template #noCancelled>
+            <div class="empty-state">
+              <mat-icon>cancel</mat-icon>
+              <h3>No Cancelled Bookings</h3>
+              <p>You haven't cancelled any bookings yet.</p>
+            </div>
+          </ng-template>
+        </div>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>
